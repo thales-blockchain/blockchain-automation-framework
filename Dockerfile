@@ -2,7 +2,7 @@
 # docker build . -t baf-build
 # docker run -v $(pwd):/home/blockchain-automation-framework/ baf-build
 
-FROM ubuntu:16.04
+FROM ubuntu:20.04
 
 # Create working directory
 WORKDIR /home/
@@ -49,4 +49,4 @@ ENV PATH=/root/bin:/root/.local/bin/:$PATH
 VOLUME /home/blockchain-automation-framework/
 
 
-CMD ["/home/run.sh"]
+CMD ["/home/reset.sh"]
