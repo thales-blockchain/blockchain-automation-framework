@@ -1,0 +1,43 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: drone-as-a-service-net-ca
+  namespace: drone-as-a-service-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: drone-as-a-service-net-ca
+  chart:
+    git: https://github.com/thales-blockchain/blockchain-automation-framework.git
+    ref: local
+    path: platforms/hyperledger-fabric/charts/ca    
+  values:
+    metadata:
+      namespace: drone-as-a-service-net
+      images:
+        alpineutils: hyperledgerlabs/alpine-utils:1.0
+        ca: hyperledger/fabric-ca:1.4.5
+    server:
+      name: ca
+      tlsstatus: true
+      admin: drone-as-a-service-admin
+    storage:
+      storageclassname: drone-as-a-servicesc
+      storagesize: 512Mi 
+    vault:
+      role: vault-role
+      address: http://192.168.0.175:8200
+      authpath: drone-as-a-service-net-auth
+      secretcert: secret/crypto/ordererOrganizations/drone-as-a-service-net/ca?ca.drone-as-a-service-net-cert.pem
+      secretkey: secret/crypto/ordererOrganizations/drone-as-a-service-net/ca?drone-as-a-service-net-CA.key
+      secretadminpass: secret/credentials/drone-as-a-service-net/ca/drone-as-a-service?user
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+    service:
+      servicetype: ClusterIP
+      ports:
+        tcp:
+          port: 7054
+    proxy:
+      provider: none
+      type: orderer
