@@ -1,0 +1,51 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: channel-provider-dronechannel
+  namespace: provider-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: channel-provider-dronechannel
+  chart:
+    git: https://github.com/thales-blockchain/blockchain-automation-framework.git
+    ref: local
+    path: platforms/hyperledger-fabric/charts/create_channel   
+  values:
+    metadata:
+      namespace: provider-net
+      network:
+        version 2.0.0
+      images:
+        fabrictools: hyperledger/fabric-tools:2.0.0
+        alpineutils: hyperledgerlabs/alpine-utils:1.0
+    peer:
+      name: peer0
+      address: peer0.provider-net:7051
+      localmspid: providerMSP
+      loglevel: debug
+      tlsstatus: true
+
+    vault:
+      role: vault-role
+      address: http://192.168.0.175:8200
+      authpath: provider-net-auth
+      adminsecretprefix: secret/crypto/peerOrganizations/provider-net/users/admin
+      orderersecretprefix: secret/crypto/peerOrganizations/provider-net/orderer 
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+
+    channel:
+      name: dronechannel
+    orderer:
+      address: orderer1.drone-as-a-service-net:7050
+    channeltx: |-
+      CtsDChoKGAgCGgYIouv3ggYiDGRyb25lY2hhbm5lbBK8Awq5AwoMZHJvbmVjaGFubmVsEkMSMQoL
+      QXBwbGljYXRpb24SIhIPCgtwcm92aWRlck1TUBIAEg8KC2N1c3RvbWVyTVNQEgAaDgoKQ29uc29y
+      dGl1bRIAGuMCErMCCgtBcHBsaWNhdGlvbhKjAggBEg8KC3Byb3ZpZGVyTVNQEgASDwoLY3VzdG9t
+      ZXJNU1ASABokCgxDYXBhYmlsaXRpZXMSFBIKCggKBFYyXzASABoGQWRtaW5zIiIKB1dyaXRlcnMS
+      FxINCAMSCQoHV3JpdGVycxoGQWRtaW5zIiIKBkFkbWlucxIYEg4IAxIKCgZBZG1pbnMQAhoGQWRt
+      aW5zIjUKFExpZmVjeWNsZUVuZG9yc2VtZW50Eh0SEwgDEg8KC0VuZG9yc2VtZW50EAIaBkFkbWlu
+      cyIsCgtFbmRvcnNlbWVudBIdEhMIAxIPCgtFbmRvcnNlbWVudBACGgZBZG1pbnMiIgoHUmVhZGVy
+      cxIXEg0IAxIJCgdSZWFkZXJzGgZBZG1pbnMqBkFkbWlucxorCgpDb25zb3J0aXVtEh0SGwoZRHJv
+      bmVBc0FTZXJ2aWNlQ29uc29ydGl1bQ==
